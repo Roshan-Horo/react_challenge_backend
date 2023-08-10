@@ -24,13 +24,13 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
       let isUserExist = await User.findOne({email});
 
       if(isUserExist){
-        res.status(CONSTANTS.BADREQUEST).json({
+        res.status(CONSTANTS.OK).json({
           status: false,
           msg: "User Already Exists."
         })
       }else{
 
-              // create user
+      // create user
       let user = await User.create({
         name,
         email,
@@ -39,10 +39,14 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
  
       // send user info
       res.status(CONSTANTS.OK).json({
-        _id : user._id,
-        name: user.name,
-        email: user.email,
-        token: generateToken(user._id)
+        status: true,
+        msg: "successfully saved user data",
+        data: {
+          _id : user._id,
+          name: user.name,
+          email: user.email,
+          token: generateToken(user._id)
+        }
       })
       }
 
@@ -54,6 +58,123 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
        })
     }
 
+
+  }else{
+    res.status(CONSTANTS.BADREQUEST).json({
+      status: false,
+      msg: "Input data Invalid",
+      data: validationResult
+      
+    })
+  }
+
+}
+
+export const createUserForFirebase = async (req: Request, res: Response, next: NextFunction) => {
+
+  // get data from frontend
+  const { name, email} = req.body
+  
+  // validate data
+  let validationResult = validateRequest({type: CREATE_USER, validateData: {name, email}})
+  console.log('user : ', {name, email})
+  console.log('result : ', validationResult)
+  // save into db
+  if(validationResult.status === true){
+
+    try {
+
+      // check if user already exists
+      let isUserExist = await User.findOne({email});
+
+      if(isUserExist){
+        res.status(CONSTANTS.BADREQUEST).json({
+          status: false,
+          msg: "User Already Exists."
+        })
+      }else{
+      // create user
+      let user = await User.create({
+        name,
+        email
+      })
+ 
+      // send user info
+      res.status(CONSTANTS.OK).json({
+        status: true,
+        msg: "successfully saved user data",
+        data: {
+          _id : user._id,
+          name: user.name,
+          email: user.email,
+          token: generateToken(user._id)
+        }
+      })
+      }
+
+    } catch (error) {
+       res.status(CONSTANTS.SERVERERROR).json({
+        status: false,
+        msg: "User Creation Failed",
+        data: error
+       })
+    }
+
+  }else{
+    res.status(CONSTANTS.BADREQUEST).json({
+      status: false,
+      msg: "Input data Invalid",
+      data: validationResult
+      
+    })
+  }
+
+}
+
+export const generateTokenForFirebase = async (req: Request, res: Response, next: NextFunction) => {
+
+  // get data from frontend
+  const { name, email} = req.body
+  
+  // validate data
+  let validationResult = validateRequest({type: CREATE_USER, validateData: {name, email}})
+
+  // save into db
+  if(validationResult.status === true){
+
+    try {
+
+      // check if user already exists
+      let user = await User.findOne({email});
+
+      if(user){
+        // send user info
+      res.status(CONSTANTS.OK).json({
+        status: true,
+        msg: "token created",
+        data: {
+          _id : user._id,
+          name: user.name,
+          email: user.email,
+          token: generateToken(user._id)
+        }
+      })
+      }else{
+ 
+      // send not found
+      res.status(CONSTANTS.OK).json({
+        status: false,
+        msg: "user not found",
+      })
+      }
+
+    } catch (error) {
+       res.status(CONSTANTS.SERVERERROR).json({
+        status: false,
+        msg: "Token Creation Failed",
+        data: error
+       })
+    }
 
   }else{
     res.status(CONSTANTS.BADREQUEST).json({

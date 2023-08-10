@@ -34,6 +34,7 @@ export const getAllChallenges = async (req: Request, res: Response, next: NextFu
 export const createChallenge = async (req: Request, res: Response, next: NextFunction) => {
 
   // get challenge data
+  console.log('req data : ', req.body)
   if(req.user && req.body){
   let userId = req.user.id
   const { title, challenge_categories, description, files } = req.body

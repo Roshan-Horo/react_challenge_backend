@@ -2,14 +2,10 @@ import mongoose from "mongoose"
 import bcrypt from 'bcryptjs'
 
 const userSchema = new mongoose.Schema({
-   name: {
-    first: {type: String, required: [true, "Enter your First Name"]},
-    middle: {type: String},
-    last: {type: String, required: [true, "Enter your Last Name"]},
-   },
+   name: {type: String, required: [true, "Enter your name"]},
    email: {type: String, unique: true, required: [true, "Enter your Email"]},
+   passcode: {type: String, unique: true, required: [true, "Enter your passcode"]},
    isAdmin: {type: Boolean, default: false},
-   passcode: {type: String, required: [true, "Enter your Passcode"]},
    challenges: [{
     challengeId: {type: mongoose.Schema.Types.ObjectId, required: [true, "Enter your Challenge Id"], ref: 'Challenge'},
     title: {type: String, required: [true, "Enter your Challenge Name"]},

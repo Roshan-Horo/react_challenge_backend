@@ -1,5 +1,5 @@
 import express from 'express'
-import { authUser, createUser,  getUser, checkEmailAlreadyExists} from '../controllers/userController';
+import { createUser, authUser, createUserForFirebase, generateTokenForFirebase,  getUser, checkEmailAlreadyExists} from '../controllers/userController';
 import { protect } from '../middlewares/authMiddleware'
 
 const router = express.Router();
