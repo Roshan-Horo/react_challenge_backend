@@ -1,5 +1,5 @@
 import express from 'express'
-import { createUser, authUser, createUserForFirebase, generateTokenForFirebase,  getUser, checkEmailAlreadyExists} from '../controllers/userController';
+import { createUser, authUser, createUserForFirebase, generateTokenForFirebase,getAllChallengesForUser,  getUser, checkEmailAlreadyExists} from '../controllers/userController';
 import { protect } from '../middlewares/authMiddleware'
 
 const router = express.Router();
@@ -27,6 +27,14 @@ router.post('/login', authUser)
  * desc - get register user using id
  */
 router.get('/', protect,  getUser);
+
+/**
+ * METHOD - GET
+ * PATH - /user/challenges
+ * ACCESS - protected
+ * desc - get all challenges completed by user
+ */
+router.get('/challenges', protect,  getAllChallengesForUser);
 
 /**
  * METHOD - POST

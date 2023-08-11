@@ -328,9 +328,9 @@ export const getAllChallengesForUser = async (req: Request, res: Response, next:
   }else{
       // fetch data from db
       try {
-        let challenges = await User.findById({ userId }).select('-name -email -phone -passcode');
+        let challenges = await User.findOne({ _id: userId }).select('-name -email -passcode -isAdmin');
 
-        if(challenges){
+        if(challenges && challenges.challenges.length > 0){
           // send challenge details
           res.status(CONSTANTS.OK).json({
             status: true,
@@ -339,7 +339,7 @@ export const getAllChallengesForUser = async (req: Request, res: Response, next:
           })
         }else{
           // challenge not found
-          res.status(CONSTANTS.NOTFOUND).json({ status: false,msg: "User Challenges Not Found"})
+          res.status(CONSTANTS.OK).json({ status: false,msg: "User has no attempted Challenge"})
         }
 
       } catch (error) {
@@ -357,3 +357,4 @@ export const getAllChallengesForUser = async (req: Request, res: Response, next:
   }
 
 }
+
